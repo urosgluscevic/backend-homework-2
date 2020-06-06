@@ -68,6 +68,10 @@ app.get("/user/:username/:action", async(req, res) => {
   } else if(action === "find"){
     const searchedUser = await Books.findUser(username);
     res.status(201).json(searchedUser);
+  } else if(action === "update"){
+    const newData = req.body;
+    const updatedUser = Books.updateUser(username, newData);
+    res.status(201).json(updatedUser);
   }
 })
 

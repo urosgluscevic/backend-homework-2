@@ -90,6 +90,16 @@ function findUser(username){
     })
 }
 
+function updateUser(username, data){ //updates an user 
+    return new Promise((reject, resolve) => {
+        try{
+            resolve(User.findOneAndUpdate({"username": username}, data)) //data is sent through the request body
+        } catch (err) {
+            rejec(new Error(err));
+        }
+    })
+}
+
 module.exports = {
     findAllBooks,
     createBook,
@@ -97,5 +107,7 @@ module.exports = {
     deleteByName,
     findAllUsers,
     addUser,
-    deleteUser
+    deleteUser,
+    findUser,
+    updateUser
 }
