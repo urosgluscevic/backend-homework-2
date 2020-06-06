@@ -16,3 +16,10 @@ app.get("/allBooks", async (req,res)=>{
     res.status(200).json(allBooks);
 })
 
+
+
+connect('mongodb://localhost:27017/booksApiH')
+  .then(() => app.listen(4000, () => {
+    console.log('server on http://localhost:4000')
+  }))
+  .catch(e => console.error(e))
