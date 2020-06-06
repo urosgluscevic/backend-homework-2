@@ -70,6 +70,7 @@ app.get("/user/:username/:action", async(req, res) => {
 
   if(action === "delete"){
     const deletedUser = await Books.deleteUser(username);
+    res.status(201).json(deletedUser)
   } else if(action === "find"){
     const searchedUser = await Books.findUser(username);
     res.status(201).json(searchedUser);
