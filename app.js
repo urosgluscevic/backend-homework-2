@@ -30,6 +30,7 @@ app.get("/item/:name/:action", async(req,res)=>{
             console.log(book2);
             break;
         case "update":
+            const data = req.body;
             const updatedBook = await Books.updateBook(name, data);
             res.status(201).json(updatedBook);
     }
@@ -72,12 +73,18 @@ app.get("/user/:username/:action", async(req, res) => {
   } else if(action === "find"){
     const searchedUser = await Books.findUser(username);
     res.status(201).json(searchedUser);
-  } else if(action === "update"){
-    const newData = req.body;
-    const updatedUser = await Books.updateUser(username, newData);
-    res.status(201).json(updatedUser);
   }
 })
+
+
+app.post("/user/:username/update", async(req,res)=>{
+  const username = req.params.username;
+  const newData = req.body;
+    const updatedUser = await Books.updateUser(username, newData);
+    res.status(201).json(updatedUser);
+
+})
+
 
 connect('mongodb://localhost:27017/booksApiH')
   .then(() => app.listen(4000, () => {

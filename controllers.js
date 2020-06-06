@@ -71,42 +71,51 @@ function addUser(data){ //adds a new user to the database
 }
 
 function deleteUser(username){
-    return new Promise((reject, resolve) => {
-        try{
-            resolve(User.deleteOne({"username":username}))
-        } catch(err){
-            reject(new Error(err))
+    return new Promise((resolve, reject) => {
+        try {
+            console.log("testera");
+            resolve(User.deleteOne({"username":username}));
+        } catch (e) {
+            console.log(e);
+            reject(false)
         }
+
     })
 }
 
 function findUser(username){
-    return new Promise((reject, resolve) => {
-        try{
-            resolve(User.find({"username": username}));
-        } catch(err){
-            reject(new Error(err));
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(User.find({"username":username}))
+        } catch (e) {
+            console.log(e);
+            reject(false)
         }
+
     })
 }
 
 function updateUser(username, data){ //updates an user 
-    return new Promise((reject, resolve) => {
-        try{
-            resolve(User.findOneAndUpdate({"username": username}, data)) //data is sent through the request body
-        } catch (err) {
-            reject(new Error(err));
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(User.findOneAndUpdate({"username":username},data))
+        } catch (e) {
+            console.log(e);
+            reject(false)
         }
+
     })
 }
 
 function updateBook(name, data){ //updates book info
-    return new Promise((reject, resolve) => {
-        try{
-            resolve(Book.findOneAndUpdate({"name": name}, data)) //data is sent through the request body
-        } catch (err) {
-            reject(new Error(err));
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(Book.findOneAndUpdate({"name":name},data))
+        } catch (e) {
+            console.log(e);
+            reject(false)
         }
+
     })
 }
 
