@@ -28,6 +28,10 @@ app.get("/item/:name/:action", async(req,res)=>{
         case "delete":
             const book2 = await Books.deleteByName(name);
             console.log(book2);
+            break;
+        case "update":
+            const updatedBook = await Books.updateBook(name, data);
+            res.status(201).json(updatedBook);
     }
     
 })
@@ -70,7 +74,7 @@ app.get("/user/:username/:action", async(req, res) => {
     res.status(201).json(searchedUser);
   } else if(action === "update"){
     const newData = req.body;
-    const updatedUser = Books.updateUser(username, newData);
+    const updatedUser = await Books.updateUser(username, newData);
     res.status(201).json(updatedUser);
   }
 })

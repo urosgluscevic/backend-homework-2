@@ -95,7 +95,17 @@ function updateUser(username, data){ //updates an user
         try{
             resolve(User.findOneAndUpdate({"username": username}, data)) //data is sent through the request body
         } catch (err) {
-            rejec(new Error(err));
+            reject(new Error(err));
+        }
+    })
+}
+
+function updateBook(name, data){ //updates book info
+    return new Promise((reject, resolve) => {
+        try{
+            resolve(Book.findOneAndUpdate({"name": name}, data)) //data is sent through the request body
+        } catch (err) {
+            reject(new Error(err));
         }
     })
 }
@@ -109,5 +119,6 @@ module.exports = {
     addUser,
     deleteUser,
     findUser,
-    updateUser
+    updateUser,
+    updateBook
 }
