@@ -50,9 +50,52 @@ function deleteByName(name){
     })
 }
 
+function findAllUsers(){ //lists all the users from the database
+    return new Promise((resolve, reject) => {
+        try{
+            resolve(User.find({}).lean().exec());
+        } catch (err){
+            reject(new Error(err))
+        }
+    })
+}
+
+function addUser(data){ //adds a new user to the database
+    return new Promise((reject, resolve) => {
+        try{
+           resolve(User.create(data))
+        } catch(err){
+            reject(new Error(err))
+        }
+    })
+}
+
+function deleteUser(username){
+    return new Promise((reject, resolve) => {
+        try{
+            resolve(User.deleteOne({"username":username}))
+        } catch(err){
+            reject(new Error(err))
+        }
+    })
+}
+
+function findUser(username){
+    return new Promise((reject, resolve) => {
+        try{
+            resolve(User.find({"username": username}));
+        } catch(err){
+            reject(new Error(err));
+        }
+    })
+}
+
 module.exports = {
     findAllBooks,
     createBook,
     findByName,
-    deleteByName
+    deleteByName,
+    findAllUsers,
+    addUser,
+    deleteUser
 }
