@@ -16,6 +16,19 @@ app.get("/allBooks", async (req,res)=>{
     res.status(200).json(allBooks);
 })
 
+app.post("/createBook", async (req,res)=>{
+    const createdBook = req.body;
+    console.log(createdBook);
+    try {
+        const book = await Books.createBook(createdBook);
+        res.status(201).json(book);
+      } catch (error) {
+        console.log(error);
+        res.json(error)
+      }
+   
+})
+
 
 
 connect('mongodb://localhost:27017/booksApiH')

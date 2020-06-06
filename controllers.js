@@ -11,6 +11,19 @@ function findAllBooks(){
     })
 }
 
+function createBook(createdBook){
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(Book.create(createdBook))
+        } catch (e) {
+            console.log(e);
+            reject(false)
+        }
+
+    })
+}
+
 module.exports = {
-    findAllBooks
+    findAllBooks,
+    createBook
 }
