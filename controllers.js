@@ -23,7 +23,36 @@ function createBook(createdBook){
     })
 }
 
+
+function findByName(name){
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(Book.find({"name":name}))
+        } catch (e) {
+            console.log(e);
+            reject(false)
+        }
+
+    })
+}
+
+
+function deleteByName(name){
+    return new Promise((resolve, reject) => {
+        try {
+            console.log("testera");
+            resolve(Book.deleteOne({"name":name}));
+        } catch (e) {
+            console.log(e);
+            reject(false)
+        }
+
+    })
+}
+
 module.exports = {
     findAllBooks,
-    createBook
+    createBook,
+    findByName,
+    deleteByName
 }

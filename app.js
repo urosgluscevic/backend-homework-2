@@ -16,6 +16,24 @@ app.get("/allBooks", async (req,res)=>{
     res.status(200).json(allBooks);
 })
 
+app.get("/item/:name/:action", async(req,res)=>{
+    const name = req.params.name;
+    const action = req.params.action;
+    console.log(name);
+    switch(action){
+        case "find":
+            const book = await Books.findByName(name);
+            res.status(201).json(book);
+            break;
+        case "delete":
+            const book2 = await Books.deleteByName(name);
+            console.log(book2);
+    }
+    
+})
+
+
+
 app.post("/createBook", async (req,res)=>{
     const createdBook = req.body;
     console.log(createdBook);
@@ -26,7 +44,6 @@ app.post("/createBook", async (req,res)=>{
         console.log(error);
         res.json(error)
       }
-   
 })
 
 
