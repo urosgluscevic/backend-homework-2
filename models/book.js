@@ -22,6 +22,19 @@ const book = new mongoose.Schema({
     },
     quantity: {
         type: Number,
-        default: 1
+        default: 1,
+        min: 1,
+        max: 10
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
+    },
+    pages: {
+        type: Number,
+        min: 10,
+        max: 5000
     }
 })
+
+module.exports = mongoose.model("book", book);
