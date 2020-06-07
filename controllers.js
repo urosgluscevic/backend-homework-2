@@ -86,7 +86,7 @@ function deleteUser(username){
 function findUser(username){
     return new Promise((resolve, reject) => {
         try {
-            resolve(User.find({"username":username}))
+            resolve(User.find({"username":username}).populate("book"))
         } catch (e) {
             console.log(e);
             reject(false)
