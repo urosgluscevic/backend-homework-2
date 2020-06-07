@@ -119,6 +119,18 @@ function updateBook(name, data){ //updates book info
     })
 }
 
+function findUserLogin(username, password){
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(User.find({"username": username, "password": password}))
+        } catch (e) {
+            console.log(e);
+            reject(new Error(e));
+        }
+
+    })
+}
+
 module.exports = {
     findAllBooks,
     createBook,
@@ -129,5 +141,6 @@ module.exports = {
     deleteUser,
     findUser,
     updateUser,
-    updateBook
+    updateBook,
+    findUserLogin
 }

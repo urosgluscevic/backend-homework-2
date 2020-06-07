@@ -1,5 +1,6 @@
 const express = require('express');
 const { json, urlencoded } = require('body-parser');
+const jwt = require("jsonwebtoken");
 
 
 const connect = require("./helpers").connect;
@@ -11,13 +12,41 @@ const app = express();
 app.use(urlencoded({ extended: true }));
 app.use(json());
 
-app.get("/allBooks", async (req,res)=>{
-    const allBooks = await Books.findAllBooks();
-    res.status(200).json(allBooks);
+app.get("/login/:username/:password", async (req, res)=> {
+  const username = req.params.username;
+  const password = req.params.password;
+
+  const user = await Books.findUserLogin(username, password);
+  console.log("Logged user:", user)
+  if(user[0]){
+    const loggedUser = user[0];
+    jwt.sign({loggedUser}, "secretkey", {expiresIn: "1h"}, (err, token)=> {
+      res.json({token})
+    })
+  } else {
+    res.status(403).json({"message": "invalid username or password"})
+  }
 })
 
-app.get("/item/:name/:action", async(req,res)=>{
-    const name = req.params.name;
+app.get("/allBooks", verifyToken, async (req,res)=>{
+
+  jwt.verify(req.token, "secretkey", async (err, authData)=> {
+    if(err){
+      res.sendStatus(403);
+    } else {
+      const allBooks = await Books.findAllBooks();
+      res.status(200).json(allBooks);
+    }
+  })
+})
+
+app.get("/item/:name/:action", verifyToken, async(req,res)=>{
+
+  jwt.verify(req.token, "secretkey", async (err, authData)=> {
+    if(err){
+      res.sendStatus(403);
+    } else {
+      const name = req.params.name;
     const action = req.params.action;
     console.log(name);
     switch(action){
@@ -33,17 +62,30 @@ app.get("/item/:name/:action", async(req,res)=>{
             const data = req.body;
             const updatedBook = await Books.updateBook(name, data);
             res.status(201).json(updatedBook);
+      }
     }
-    
+  })
 })
 
-app.get("/users", async (req, res) => { //returns a list of all the users from the database
-  const users = await Books.findAllUsers();
-  res.status(200).json(users)
+app.get("/users", verifyToken, async (req, res) => { //returns a list of all the users from the database
+
+  jwt.verify(req.token, "secretkey", async (err, authData)=>{
+    if(err){
+      res.sendStatus(403);
+    } else {
+      const users = await Books.findAllUsers();
+      res.status(200).json(users)
+    }
+  })
 })
 
-app.post("/createBook", async (req,res)=>{
-    const createdBook = req.body;
+app.post("/createBook", verifyToken, async (req,res)=>{
+
+  jwt.verify(req.token, "secretkey", async (err, authData)=>{
+    if(err){
+      res.sendStatus(403);
+    } else {
+      const createdBook = req.body;
     console.log(createdBook);
     try {
         const book = await Books.createBook(createdBook);
@@ -52,40 +94,73 @@ app.post("/createBook", async (req,res)=>{
         console.log(error);
         res.json(error)
       }
+    }
+  })
 })
 
-app.post("/createUser", async (req, res) => { //creates a new user
-  const userData = req.body;
-  try{
-    const newUser = await Books.addUser(userData);
-    res.status(201).json(newUser)
-  } catch(err){
-    res.json(err)
+app.post("/createUser", verifyToken, async (req, res) => { //creates a new user
+
+  jwt.verify(req.token, "secretkey", async (err, authData)=>{
+    if(err){
+      res.sendStatus(403);
+    } else {
+      const userData = req.body;
+      try{
+        const newUser = await Books.addUser(userData);
+        res.status(201).json(newUser)
+      } catch(err){
+        res.json(err)
+      }
+    }
+  })
+})
+
+app.get("/user/:username/:action", verifyToken, async(req, res) => {
+
+  jwt.verify(req.token, "secretkey", async (err, authData)=>{
+    if(err){
+      res.sendStatus(403);
+    } else {
+      const username = req.params.username;
+      const action = req.params.action;
+
+      if(action === "delete"){
+        const deletedUser = await Books.deleteUser(username);
+        res.status(201).json(deletedUser)
+      } else if(action === "find"){
+        const searchedUser = await Books.findUser(username);
+        res.status(201).json(searchedUser);
+      }
+    }
+  })
+})
+
+
+app.post("/user/:username/update", verifyToken ,async(req,res)=>{
+
+  jwt.verify(req.token, "secretkey", async (err, authData)=>{
+    if(err){
+      res.sendStatus(403);
+    } else {
+      const username = req.params.username;
+      const newData = req.body;
+      const updatedUser = await Books.updateUser(username, newData);
+      res.status(201).json(updatedUser);
+    }
+  })
+})
+
+function verifyToken(req, res, next){
+  const bearerHeader = req.headers["authorization"];
+  if(typeof bearerHeader !== "undefined"){
+    const bearer = bearerHeader.split(" ");
+    const bearerToken = bearer[1];
+    req.token = bearerToken;
+    next()
+  } else {
+    res.sendStatus(403);
   }
-})
-
-app.get("/user/:username/:action", async(req, res) => {
-  const username = req.params.username;
-  const action = req.params.action;
-
-  if(action === "delete"){
-    const deletedUser = await Books.deleteUser(username);
-    res.status(201).json(deletedUser)
-  } else if(action === "find"){
-    const searchedUser = await Books.findUser(username);
-    res.status(201).json(searchedUser);
-  }
-})
-
-
-app.post("/user/:username/update", async(req,res)=>{
-  const username = req.params.username;
-  const newData = req.body;
-    const updatedUser = await Books.updateUser(username, newData);
-    res.status(201).json(updatedUser);
-
-})
-
+}
 
 connect('mongodb://localhost:27017/booksApiH')
   .then(() => app.listen(4000, () => {
