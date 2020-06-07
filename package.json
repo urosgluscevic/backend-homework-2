@@ -4,7 +4,7 @@
   "description": "second homework assignment, book API group",
   "main": "app.js",
   "scripts": {
-    "start": "npm app.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
